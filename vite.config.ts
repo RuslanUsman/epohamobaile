@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
-// https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
-})
+  // локально — '/', при билде — '/epohamobaile/'
+  base: command === 'serve' ? '/' : '/epohamobaile/',
+}))

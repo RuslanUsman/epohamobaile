@@ -41,13 +41,13 @@ export default function App() {
     // Получаем текущую сессию
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
-      setSession(data.session);
+      setSession(data.session ?? null);
       setChecking(false);
-    });
+    }).catch(() => setChecking(false));
 
     // Подписка на изменения авторизации
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
+      setSession(s ?? null);
     });
 
     return () => {
@@ -60,17 +60,19 @@ export default function App() {
     return <div style={{ padding: 24 }}>Загрузка...</div>;
   }
 
-  const isAuth = Boolean(session);
+  const isAuth = Boolean(session?.user?.id);
+  const currentUserId = session?.user?.id || null;
 
   return (
     <CartProvider>
       <BrowserRouter>
         <Header session={session} />
 
-        {/* Входящие вызовы */}
-        {isAuth && (
+        {/* Входящие вызовы — монтируем только при наличии валидного user.id */}
+        {isAuth && currentUserId && (
           <div style={{ position: 'fixed', top: 80, right: 20, zIndex: 1000 }}>
-            <IncomingCall currentUserId={session.user.id} />
+            {/* key фиксирует ремонт при смене пользователя */}
+            <IncomingCall key={currentUserId} currentUserId={currentUserId} />
           </div>
         )}
 
@@ -164,6 +166,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
+
         <Footer />
       </BrowserRouter>
     </CartProvider>
