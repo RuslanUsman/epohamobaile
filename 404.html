@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting...</title>
+    <script>
+      (function() {
+        var base = '/epohamobaile/';
+        var path = location.pathname.replace(base, '');
+        var search = location.search || '';
+        var hash = location.hash || '';
+        // Переносим путь в хэш, чтобы SPA его прочитал
+        var target = base + '#' + '/' + path + search + hash;
+        location.replace(target);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
